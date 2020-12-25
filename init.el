@@ -1,15 +1,20 @@
 (setq lexical-binding t)
 ;; This is only needed once, near the top of the file
+(require 'package)
+(add-to-list 'package-archives
+	     '(("gnu" . "https://elpa.gnu.org/packages/")
+             ("melpa" . "https://melpa.org/packages/")
+             ("marmalade" . "https://marmalade-repo.org/packages/")
+             ("melpa-stable" . "https://stable.melpa.org/packages/")
+             ("elpy" . "https://jorgenschaefer.github.io/packages/")))
+(package-initialize)
+
 (eval-when-compile
   ;; Following line is not needed if use-package.el is in ~/.emacs.d
   ;; This will need updating if versions change.  How to avoid that?
   (add-to-list 'load-path "~/.emacs.d/use-package")
   (require 'use-package))
 
-(require 'package)
-(add-to-list 'package-archives
-	     '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(package-initialize)
 
 ;; HELM
 (use-package helm
