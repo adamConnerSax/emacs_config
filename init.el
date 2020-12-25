@@ -1,14 +1,4 @@
 (setq lexical-binding t)
-;; This is only needed once, near the top of the file
-;; (require 'package)
-;; (add-to-list 'package-archives
-;; 	     '(("gnu" . "https://elpa.gnu.org/packages/")
-;;                ("melpa" . "https://melpa.org/packages/")
-;;                ("marmalade" . "https://marmalade-repo.org/packages/")
-;;                ("melpa-stable" . "https://stable.melpa.org/packages/")
-;;                ("elpy" . "https://jorgenschaefer.github.io/packages/")))
-;; (package-initialize)
-
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -25,14 +15,16 @@
 (straight-use-package 'use-package)
 (use-package helm
   :straight t
-  :config
+  :bind
+  ("M-x" . helm-M-x)
+  ("M-y" . helm-show-kill-ring)  
   )
-;; (eval-when-compile
-;;   ;; Following line is not needed if use-package.el is in ~/.emacs.d
-;;   ;; This will need updating if versions change.  How to avoid that?
-;;   (add-to-list 'load-path "~/.emacs.d/use-package")
-;;   (require 'use-package))
 
+;; (use-package helm-show-kill-ring
+;;   :straight t
+;;   :after helm
+;;   :bind ("M-y" 
+;;   )
 
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
@@ -41,7 +33,7 @@
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
 
-(global-set-key (kbd "M-x") #'helm-M-x)
+;;(global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
@@ -256,7 +248,7 @@
  '(column-number-mode t)
  '(custom-enabled-themes '(tsdh-light))
  '(custom-safe-themes
-   '("b54826e5d9978d59f9e0a169bbd4739dd927eead3ef65f56786621b53c031a7c" default))
+   '("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "b54826e5d9978d59f9e0a169bbd4739dd927eead3ef65f56786621b53c031a7c" default))
  '(dimmer-fraction 0.1)
  '(fci-rule-color "#383a42")
  '(flycheck-haskell-hlint-executable "~/.cabal/bin/hlint")
@@ -277,14 +269,18 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#f0f0f0" "#50a14f"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#f0f0f0" "#9ca0a4"))
  '(lsp-enable-file-watchers nil)
- '(lsp-file-watch-ignored
+ '(lsp-file-watch-ignored-directories
    '("[/\\\\]dist" "[/\\\\]dist-newstyle" "[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$"))
  '(lsp-file-watch-threshold 5000)
  '(lsp-log-io nil)
  '(lsp-print-performance t)
  '(magit-repository-directories '(("~/src" . 1)))
+ '(objed-cursor-color "#e45649")
  '(package-selected-packages
    '(all-the-icons-dired undo-tree rainbow-delimiters all-the-icons dimmer doom-themes forge gnu-elpa-keyring-update keychain-environment flycheck-stan company-stan lsp-mode lsp-ui lsp-haskell magithub magit flycheck-pos-tip flycheck-hlint cl-lib shm helm haskell-mode flycheck-hdevtools flycheck-haskell flycheck-stack paredit ghci-completion ghc-imported-from flycheck company-ghc company))
+ '(pdf-view-midnight-colors (cons "#383a42" "#fafafa"))
+ '(rustic-ansi-faces
+   ["#fafafa" "#e45649" "#50a14f" "#986801" "#4078f2" "#a626a4" "#0184bc" "#383a42"])
  '(vc-annotate-background "#fafafa")
  '(vc-annotate-color-map
    (list
