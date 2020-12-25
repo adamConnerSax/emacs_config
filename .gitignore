@@ -2,6 +2,7 @@
 /elpa
 *.elc
 auto-save-list
-forge-database.sql
+forge-database.sqlite
 /tmp
 /url
+/straight
