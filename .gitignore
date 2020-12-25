@@ -6,3 +6,6 @@ forge-database.sqlite
 /tmp
 /url
 /straight
+/transient
+/emacs-custom
+/auto-save-alist

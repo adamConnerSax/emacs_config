@@ -130,9 +130,13 @@
 (use-package flycheck
   :straight t
   :init
-  (global-flycheck-mode t))
+  (global-flycheck-mode t)
+  :custom
+  (flycheck-haskell-hlint-executable "~/.cabal/bin/hlint")
+  )
 (use-package yasnippet
-  :straight t)
+  :straight t
+  )
 (use-package lsp-mode
   :straight t
   :hook (haskell-mode . lsp)
@@ -142,17 +146,13 @@
   (lsp-log-io t)
   (lsp-file-watch-threshold 5000)
   (lsp-enable-file-watchers nil)
-  
-;;  :config
-;;  (setq lsp-prefer-flymake nil)
-;;  (setq lsp-enable-file-watchers nil)
-;;  (setq lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))
+  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
   )
+
 (use-package lsp-ui
   :straight t
   :commands lsp-ui-mode
 ;;  :config
-;;  
 ;;  (setq lsp-ui-doc-enable t
 ;;        lsp-ui-doc-use-childframe t
 ;;        lsp-ui-doc-position 'top
@@ -170,33 +170,34 @@
 (use-package lsp-haskell
  :straight t
  :config
- ;; (setq lsp-haskell-process-path-hie "ghcide")
  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper")
  (setq lsp-haskell-process-args-hie '())
  ;; Comment/uncomment this line to see interactions between lsp client/server.
  ;; (setq lsp-log-io t)
  )
-;; (use-package haskell-mode
+(use-package haskell-mode
+  :straight t
+  :config
+  ;; haskell-mode doesn't know about newer GHC features.
+  (let ((new-extensions '("QuantifiedConstraints"
+                          "DerivingVia"
+                          "BlockArguments"
+                          "DerivingStrategies"
+                          "StandaloneKindSignatures"
+                          )))
+    (setq
+     haskell-ghc-supported-extensions
+     (append haskell-ghc-supported-extensions new-extensions)))
 
-;;   :config
-;;   ;; haskell-mode doesn't know about newer GHC features.
-;;   (let ((new-extensions '("QuantifiedConstraints"
-;;                           "DerivingVia"
-;;                           "BlockArguments"
-;;                           "DerivingStrategies"
-;;                           "StandaloneKindSignatures"
-;;                           )))
-;;     (setq
-;;      haskell-ghc-supported-extensions
-;;      (append haskell-ghc-supported-extensions new-extensions)))
+  :bind (("C-c a c" . haskell-cabal-visit-file)
+         ("C-c a i" . haskell-navigate-imports)
+         ("C-c a I" . haskell-navigate-imports-return))
+  )
 
-;;   :bind (("C-c a c" . haskell-cabal-visit-file)
-;;          ("C-c a i" . haskell-navigate-imports)
-;;          ("C-c a I" . haskell-navigate-imports-return)))
-
-;; (use-package haskell-snippets
-;;   :after (haskell-mode yasnippet)
-;;   :defer)
+(use-package haskell-snippets
+  :straight t
+  :after (haskell-mode yasnippet)
+  :defer)
 
 
 ;; Nope, I want my copies in the system temp dir.
@@ -210,301 +211,7 @@
   )
 (use-package company-stan
   :straight t
-  :hook (stan-mode . company-stan-setup))
+  :hook (stan-mode . company-stan-setup)
+  )
 
-
-;; LSP/Hie
-;;(require 'lsp)
-;;(require 'lsp-mode)
-;;(add-hook 'haskell-mode-hook #'lsp)
-
-;;(require 'lsp-ui)
-;;(add-hook 'lsp-mode-hook 'lsp-ui-mode)
-
-;;(require 'lsp-haskell)
-;;(setq lsp-haskell-process-path-hie "/users/adam/.cabal/bin/hie-wrapper")
-
-
-;;(let ((my-ghc-path (expand-file-name "/Applications/ghc-7.10.2.app/Contents/bin")))
-;;  (setenv "PATH" (concat (getenv "PATH") path-separator my-ghc-path))
-;;  (add-to-list 'exec-path my-ghc-path))
-
-(add-to-list 'load-path ".")
-;; Always load via this. If you contribute you should run `make all`
-;; to regenerate this.
-(load "haskell-mode-autoloads")
-
-(add-hook 'after-init-hook #'global-flycheck-mode)
-;;(with-eval-after-load 'intero
-;;    (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
-;; Customization
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#f0f0f0" "#e45649" "#50a14f" "#986801" "#4078f2" "#a626a4" "#0184bc" "#1b2229"])
- '(column-number-mode t)
- '(custom-enabled-themes '(tsdh-light))
- '(custom-safe-themes
-   '("99ea831ca79a916f1bd789de366b639d09811501e8c092c85b2cb7d697777f93" "b54826e5d9978d59f9e0a169bbd4739dd927eead3ef65f56786621b53c031a7c" default))
- '(dimmer-fraction 0.1)
- '(fci-rule-color "#383a42")
- '(flycheck-haskell-hlint-executable "~/.cabal/bin/hlint")
- '(flycheck-hlintrc nil)
- '(haskell-mode-contextual-import-completion nil)
- '(haskell-mode-stylish-haskell-path "brittany")
- '(haskell-notify-p t)
- '(haskell-process-args-stack-ghci '("--ghc-options=-ferror-spans -v"))
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-load-or-reload-prompt t)
- '(haskell-process-log t)
- '(haskell-process-suggest-hoogle-imports t)
- '(haskell-process-suggest-remove-import-lines t)
- '(haskell-process-type 'stack-ghci)
- '(haskell-stylish-on-save nil)
- '(haskell-tags-on-save t)
- '(jdee-db-active-breakpoint-face-colors (cons "#f0f0f0" "#4078f2"))
- '(jdee-db-requested-breakpoint-face-colors (cons "#f0f0f0" "#50a14f"))
- '(jdee-db-spec-breakpoint-face-colors (cons "#f0f0f0" "#9ca0a4"))
- '(lsp-enable-file-watchers nil)
- '(lsp-file-watch-ignored-directories
-   '("[/\\\\]dist" "[/\\\\]dist-newstyle" "[/\\\\]\\.git$" "[/\\\\]\\.hg$" "[/\\\\]\\.bzr$" "[/\\\\]_darcs$" "[/\\\\]\\.svn$" "[/\\\\]_FOSSIL_$" "[/\\\\]\\.idea$" "[/\\\\]\\.ensime_cache$" "[/\\\\]\\.eunit$" "[/\\\\]node_modules$" "[/\\\\]\\.fslckout$" "[/\\\\]\\.tox$" "[/\\\\]\\.stack-work$" "[/\\\\]\\.bloop$" "[/\\\\]\\.metals$" "[/\\\\]target$" "[/\\\\]\\.deps$" "[/\\\\]build-aux$" "[/\\\\]autom4te.cache$" "[/\\\\]\\.reference$"))
- '(lsp-file-watch-threshold 5000)
- '(lsp-log-io nil)
- '(lsp-print-performance t)
- '(magit-repository-directories '(("~/src" . 1)))
- '(objed-cursor-color "#e45649")
- '(package-selected-packages
-   '(all-the-icons-dired undo-tree rainbow-delimiters all-the-icons dimmer doom-themes forge gnu-elpa-keyring-update keychain-environment flycheck-stan company-stan lsp-mode lsp-ui lsp-haskell magithub magit flycheck-pos-tip flycheck-hlint cl-lib shm helm haskell-mode flycheck-hdevtools flycheck-haskell flycheck-stack paredit ghci-completion ghc-imported-from flycheck company-ghc company))
- '(pdf-view-midnight-colors (cons "#383a42" "#fafafa"))
- '(rustic-ansi-faces
-   ["#fafafa" "#e45649" "#50a14f" "#986801" "#4078f2" "#a626a4" "#0184bc" "#383a42"])
- '(vc-annotate-background "#fafafa")
- '(vc-annotate-color-map
-   (list
-    (cons 20 "#50a14f")
-    (cons 40 "#688e35")
-    (cons 60 "#807b1b")
-    (cons 80 "#986801")
-    (cons 100 "#ae7118")
-    (cons 120 "#c37b30")
-    (cons 140 "#da8548")
-    (cons 160 "#c86566")
-    (cons 180 "#b74585")
-    (cons 200 "#a626a4")
-    (cons 220 "#ba3685")
-    (cons 240 "#cf4667")
-    (cons 260 "#e45649")
-    (cons 280 "#d2685f")
-    (cons 300 "#c07b76")
-    (cons 320 "#ae8d8d")
-    (cons 340 "#383a42")
-    (cons 360 "#383a42")))
- '(vc-annotate-very-old-color nil))
-
-(add-hook 'haskell-mode-hook 'haskell-hook)
-(add-hook 'haskell-mode-hook 'haskell-indentation-mode)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'haskell-mode-hook 'column-number-mode)
-;;(add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
-;;(add-hook 'haskell-mode-hook 'intero-mode)
-
-;;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
-;;(set-face-background 'shm-current-face "#eee8d5")
-;;(set-face-background 'shm-quarantine-face "lemonchiffon")
-
-;; Haskell main editing mode key bindings.
-(defun haskell-hook ()
-  ;; Load the current file (and make a session if not already made).
-  (define-key haskell-mode-map [?\C-c ?\C-l] 'haskell-process-load-file)
-  (define-key haskell-mode-map [f5] 'haskell-process-load-file)
-
-  ;; Switch to the REPL.
-  (define-key haskell-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch)
-  ;; “Bring” the REPL, hiding all other windows apart from the source
-  ;; and the REPL.
-  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-
-  ;; Build the Cabal project.
-  (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-  ;; Interactively choose the Cabal command to run.
-  (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-
-  ;; Get the type and info of the symbol at point, print it in the
-  ;; message buffer.
-  (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-
-  ;; Contextually do clever things on the space key, in particular:
-  ;;   1. Complete imports, letting you choose the module name.
-  ;;   2. Show the type of the symbol after the space.
-  ;;(define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-
-  ;; Jump to the imports. Keep tapping to jump between import
-  ;; groups. C-u f8 to jump back again.
-  (define-key haskell-mode-map [f8] 'haskell-navigate-imports)
-
-  ;; Jump to the definition of the current symbol.
-  (define-key haskell-mode-map (kbd "M-.") 'haskell-mode-tag-find)
-
-  ;; Indent the below lines on columns after the current column.
-  (define-key haskell-mode-map (kbd "C-<right>")
-    (lambda ()
-      (interactive)
-      (haskell-move-nested 1)))
-  ;; Same as above but backwards.
-  (define-key haskell-mode-map (kbd "C-<left>")
-    (lambda ()
-      (interactive)
-      (haskell-move-nested -1))))
-
-;; Useful to have these keybindings for .cabal files, too.
-(defun haskell-cabal-hook ()
-  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-  (define-key haskell-cabal-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
-
-
-;; for ghcjs
-(when nil
-  (defun haskell-process-compile-ghcjs ()
-    (interactive)
-    (save-buffer)
-    (haskell-process-file-loadish
-     (format "!sh check.sh %s"
-             (buffer-file-name))
-     nil
-     (current-buffer)))
-  (define-key interactive-haskell-mode-map [f5] 'haskell-process-compile-ghcjs)
-  (defun haskell-process-build-ghcjs ()
-    (interactive)
-    (save-buffer)
-    (haskell-process-file-loadish
-     (format "!ghcjs -O2 %s"
-             (buffer-file-name))
-     nil
-     (current-buffer)))
-  (define-key interactive-haskell-mode-map (kbd "C-c C-c") 'haskell-process-compile-ghcjs))
-
-(defvar haskell-stack-commands
-  '("build"
-    "update"
-    "test"
-    "bench"
-    "install")
-  "Stack commands.")
-
-;;;###autoload
-(defun haskell-process-stack-build ()
-  "Build the Stack project."
-  (interactive)
-  (haskell-process-do-stack "build")
-  (haskell-process-add-cabal-autogen))
-
-;; ;;;###autoload
-;; (defun haskell-process-stack (p)
-;;   "Prompts for a Stack command to run."
-;;   (interactive "P")
-;;   (if p
-;;       (haskell-process-do-stack
-;;        (read-from-minibuffer "Stack command (e.g. install): "))
-;;     (haskell-process-do-stack
-;;      (funcall haskell-completing-read-function "Stack command: "
-;;               (append haskell-stack-commands
-;;                       (list "build --ghc-options=-fforce-recomp")
-;;                       (list "build --ghc-options=-O0"))))))
-;; (defun haskell-process-do-stack (command)
-;;   "Run a Cabal command."
-;;   (let ((process (haskell-interactive-process)))
-;;     (cond
-;;      ((let ((child (haskell-process-process process)))
-;;         (not (equal 'run (process-status child))))
-;;       (message "Process is not running, so running directly.")
-;;       (shell-command (concat "stack " command)
-;;                      (get-buffer-create "*haskell-process-log*")
-;;                      (get-buffer-create "*haskell-process-log*"))
-;;       (switch-to-buffer-other-window (get-buffer "*haskell-process-log*")))
-;;      (t (haskell-process-queue-command
-;;          process
-;;          (make-haskell-command
-;;           :state (list (haskell-interactive-session) process command 0)
-
-;;           :go
-;;           (lambda (state)
-;;             (haskell-process-send-string
-;;              (cadr state)
-;;              (format ":!stack %s"
-;;                      (cl-caddr state))))
-
-;;           :live
-;;           (lambda (state buffer)
-;;             (let ((cmd (replace-regexp-in-string "^\\([a-z]+\\).*"
-;;                                                  "\\1"
-;;                                                  (cl-caddr state))))
-;;               (cond ((or (string= cmd "build")
-;;                          (string= cmd "install"))
-;;                      (haskell-process-live-build (cadr state) buffer t))
-;;                     (t
-;;                      (haskell-process-cabal-live state buffer)))))
-
-;;           :complete
-;;           (lambda (state response)
-;;             (let* ((process (cadr state))
-;;                    (session (haskell-process-session process))
-;;                    (message-count 0)
-;;                    (cursor (haskell-process-response-cursor process)))
-;;               (haskell-process-set-response-cursor process 0)
-;;               (while (haskell-process-errors-warnings session process response)
-;;                 (setq message-count (1+ message-count)))
-;;               (haskell-process-set-response-cursor process cursor)
-;;               (let ((msg (format "Complete: cabal %s (%s compiler messages)"
-;;                                  (cl-caddr state)
-;;                                  message-count)))
-;;                 (haskell-interactive-mode-echo session msg)
-;;                 (when (= message-count 0)
-;;                   (haskell-interactive-mode-echo
-;;                    session
-;;                    "No compiler messages, dumping complete output:")
-;;                   (haskell-interactive-mode-echo session response))
-;;                 (haskell-mode-message-line msg)
-;;                 (when (and haskell-notify-p
-;;                            (fboundp 'notifications-notify))
-;;                   (notifications-notify
-;;                    :title (format "*%s*" (haskell-session-name (car state)))
-;;                    :body msg
-;;                    :app-name (cl-ecase (haskell-process-type)
-;;                                ('ghci haskell-process-path-cabal)
-;;                                ('cabal-repl haskell-process-path-cabal)
-;;                                ('cabal-ghci haskell-process-path-cabal))
-;;                    :app-icon haskell-process-logo)))))))))))
-
-;; (defun haskell-setup-stack-commands ()
-;;   "Setup stack keybindings."
-;;   (interactive)
-;;   (define-key interactive-haskell-mode-map (kbd "C-c C-c") 'haskell-process-stack-build)
-;;   (define-key interactive-haskell-mode-map (kbd "C-c c") 'haskell-process-stack))
-
-
-
-;; (defun stack-mode-save-flycheck ()
-;;   "Save the buffer and flycheck it."
-;;   (interactive)
-;;   (save-buffer)
-;;   (flycheck-buffer))
-
-(setq flycheck-check-syntax-automatically nil)
-
-;;(autoload 'ghc-init "ghc" nil t)
-;;(autoload 'ghc-debug "ghc" nil t)
-;;(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(setq custom-file (make-temp-file "~/.emacs.d/emacs-custom/"))
