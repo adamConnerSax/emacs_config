@@ -146,7 +146,7 @@
   (lsp-log-io t)
   (lsp-file-watch-threshold 5000)
   (lsp-enable-file-watchers nil)
-  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
+;;  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
   )
 
 (use-package lsp-ui
