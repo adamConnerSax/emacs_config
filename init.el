@@ -3,7 +3,7 @@
 (eval-when-compile
   ;; Following line is not needed if use-package.el is in ~/.emacs.d
   ;; This will need updating if versions change.  How to avoid that?
-  (add-to-list 'load-path "elpa/use-package-20200520.2305")
+  (add-to-list 'load-path "~/.emacs.d/use-package")
   (require 'use-package))
 
 (require 'package)
