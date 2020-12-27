@@ -11,29 +11,62 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
 (straight-use-package 'use-package)
-(use-package helm
-  :straight t
-  :bind
-  ("M-x" . helm-M-x)
-  ("M-y" . helm-show-kill-ring)  
-  )
 
+
+;; (use-package helm
+;;   :straight t
+;;   :bind
+;;   ("M-x" . helm-M-x)
+;;   ("M-y" . helm-show-kill-ring)  
+;;   )
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+;;(when (executable-find "curl")
+;;  (setq helm-google-suggest-use-curl-p t))
 ;; (use-package helm-show-kill-ring
 ;;   :straight t
 ;;   :after helm
 ;;   :bind ("M-y" 
 ;;   )
-
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-unset-key (kbd "C-x c"))
-(when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
-
 ;;(global-set-key (kbd "M-x") #'helm-M-x)
+;;(helm-mode 1)
+
+
+(global-unset-key (kbd "C-x c"))
+(use-package counsel
+  :straight t
+  :after ivy
+  :config (counsel-mode))
+
+(use-package ivy
+  :straight t
+  :defer 0.1
+  :diminish
+  :bind (("C-c C-r" . ivy-resume)
+	 ("C-x b" . ivy-switch-buffer-other-window))
+  :custom
+  (ivy-count-format "(%d/%d) ")
+  (ivy-use-virtual-buffers t)
+  :config (ivy-mode))
+
+(use-package ivy-rich
+  :straight t
+  :after ivy
+  :custom
+  (ivy-virtual-abbreviate 'full
+			  ivy-rich-switch-buffer-align-virtual-buffer t
+			  ivy-rich-path-style 'abbrev))
+
+(use-package swiper
+  :straight t
+  :after ivy
+  :bind (("C-s" . swiper)
+	 ("C-r" . swiper))
+  )
+
+
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
@@ -123,9 +156,11 @@
 (use-package forge
   :straight t
   :after magit)
-;;
 
-(helm-mode 1)
+(use-package projectile
+  :straight t
+  )
+
 ;; LSP
 (use-package flycheck
   :straight t
@@ -146,7 +181,7 @@
   (lsp-log-io t)
   (lsp-file-watch-threshold 5000)
   (lsp-enable-file-watchers nil)
-  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
+;;  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
   )
 
 (use-package lsp-ui
