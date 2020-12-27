@@ -157,9 +157,9 @@
   :straight t
   :after magit)
 
-(use-package projectile
-  :straight t
-  )
+;;(use-package projectile
+;;  :straight t
+;;  )
 
 ;; LSP
 (use-package flycheck
