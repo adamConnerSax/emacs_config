@@ -13,28 +13,67 @@
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 
+(setq
+   ;; No need to see GNU agitprop.
+   inhibit-startup-screen t
+   ;; No need to remind me what a scratch buffer is.
+   initial-scratch-message nil
+   ;; Double-spaces after periods is morally wrong.
+   sentence-end-double-space nil
+   ;; Never ding at me, ever.
+   ring-bell-function 'ignore
+   ;; Prompts should go in the minibuffer, not in a GUI.
+   use-dialog-box nil
+   ;; Fix undo in commands affecting the mark.
+   mark-even-if-inactive nil
+   ;; Let C-k delete the whole line.
+   kill-whole-line t
+   ;; search should be case-sensitive by default
+   case-fold-search nil
+   )
 
-;; (use-package helm
-;;   :straight t
-;;   :bind
-;;   ("M-x" . helm-M-x)
-;;   ("M-y" . helm-show-kill-ring)  
-;;   )
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-;;(when (executable-find "curl")
-;;  (setq helm-google-suggest-use-curl-p t))
-;; (use-package helm-show-kill-ring
-;;   :straight t
-;;   :after helm
-;;   :bind ("M-y" 
-;;   )
-;;(global-set-key (kbd "M-x") #'helm-M-x)
-;;(helm-mode 1)
+;; Never mix tabs and spaces. Never use tabs, period.
+;; We need the setq-default here because this becomes
+;; a buffer-local variable when set.
+(setq-default indent-tabs-mode nil)
 
+(defalias 'yes-or-no-p 'y-or-n-p) ; Accept 'y' in lieu of 'yes'.
+
+;; unicode defaults
+(set-charset-priority 'unicode)
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
+;;
+(delete-selection-mode t)
+(global-display-line-numbers-mode t)
+(column-number-mode)
 
 (global-unset-key (kbd "C-x c"))
+(setq custom-safe-themes t)
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+(setq require-final-newline t)
+
+
+(use-package gnu-elpa-keyring-update
+  :straight t
+  )
+(setq
+ make-backup-files nil
+ auto-save-default nil
+ create-lockfiles nil)
+(unbind-key "C-x C-d") ;; list-directory
+(unbind-key "C-z") ;; suspend-frame
+(unbind-key "M-o") ;; facemenu-mode
+(unbind-key "<mouse-2>") ;; pasting with mouse-wheel click
+(unbind-key "<C-wheel-down>") ;; text scale adjust
+
+(electric-pair-mode)
+
 (use-package counsel
   :straight t
   :after ivy
@@ -66,11 +105,6 @@
 	 ("C-r" . swiper))
   )
 
-
-(global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
-
-
 (let ((my-local-path (expand-file-name "~/.local/bin"))
       (my-cabal-path (expand-file-name "~/.cabal/bin"))
       (my-ghcup-path (expand-file-name "~/.ghcup/bin"))
@@ -81,23 +115,7 @@
   (add-to-list 'exec-path my-local-path)
   (add-to-list 'exec-path my-ghcup-path)
   )
-;; some additions 12/24/2020
-(setq gc-cons-threshold 100000000)
-(use-package gnu-elpa-keyring-update
-  :straight t
-  )
-(delete-selection-mode t)
-(global-display-line-numbers-mode t)
-(column-number-mode)
-(setq
- make-backup-files nil
- auto-save-default nil
- create-lockfiles nil)
-(unbind-key "C-x C-d") ;; list-directory
-(unbind-key "C-z") ;; suspend-frame
-(unbind-key "M-o") ;; facemenu-mode
-(unbind-key "<mouse-2>") ;; pasting with mouse-wheel click
-(unbind-key "<C-wheel-down>") ;; text scale adjust
+
 (use-package keychain-environment
   :straight t
   :config
@@ -132,10 +150,25 @@
           doom-challenger-deep-brighter-modeline t)
     (load-theme chosen-theme)))
 
+;; (use-package doom-modeline
+;;   :straight t
+;;   :config (doom-modeline-mode)
+;;   )
+
 (use-package dimmer
   :straight t
   :custom (dimmer-fraction 0.1)
   :config (dimmer-mode))
+
+(use-package which-key
+  :straight t
+  :config
+  (which-key-mode)
+  (which-key-setup-side-window-bottom)
+  :custom
+  (which-key-idle-delay 1.2)
+  (which-key-enable-extended-define-key t)
+  )
 
 (show-paren-mode)
 
@@ -147,31 +180,90 @@
   :straight t
   :diminish magit-auto-revert-mode
   :diminish auto-revert-mode
-  :bind (("C-c g" . #'magit-status))
+  :bind (("C-c g" . #'magit-status)
+	 ("C-x g" . #'magit-status)
+	 ("C-x M-g" . #'magit-dispatch-popup))
   :custom
   (magit-repository-directories '(("~/src" . 1)))
   :config
   (add-to-list 'magit-no-confirm 'stage-all-changes))
 
+(use-package libgit
+  :straight t
+  )
+
+(use-package magit-libgit
+  :straight t
+  :after (magit libgit)
+  )
+
+;;(global-set-key (kbd "C-x g") 'magit-status)
+;;(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+
 (use-package forge
   :straight t
   :after magit)
 
-;;(use-package projectile
-;;  :straight t
-;;  )
+(use-package projectile
+  :straight t
+  :diminish
+  :bind (("C-c k" . #'projectile-kill-buffers)
+  ("C-c M" . #'projectile-compile-project))
+  :custom (projectile-completion-system 'ivy)
+  :config (projectile-mode)
+  )
+
+(use-package counsel-projectile
+  :straight t
+  :after (projectile counsel)
+  :bind (("C-c f" . #'counsel-projectile)
+         ("C-c F" . #'counsel-projectile-switch-project)))
+
+(use-package deadgrep
+  :straight t
+  :bind (("C-c h" . #'deadgrep)))
+
+(use-package visual-regexp
+  :straight t
+  :bind (("C-c 5" . #'vr/replace)))
+
+(use-package company
+  :straight t
+  :diminish
+  :bind (("C-." . #'company-complete))
+  :hook (prog-mode . company-mode)
+  :custom
+  (company-dabbrev-downcase nil "Don't downcase returned candidates.")
+  (company-show-numbers t "Numbers are helpful.")
+  (company-tooltip-limit 20 "The more the merrier.")
+  (company-tooltip-idle-delay 0.4 "Faster!")
+  (company-async-timeout 20 "Some requests can take a long time. That's fine.")
+  :config
+
+  ;; Use the numbers 0-9 to select company completion candidates
+  (let ((map company-active-map))
+    (mapc (lambda (x) (define-key map (format "%d" x)
+   `(lambda () (interactive) (company-complete-number ,x))))
+   (number-sequence 0 9))))
 
 ;; LSP
 (use-package flycheck
   :straight t
-  :init
+  :config
   (global-flycheck-mode t)
+  (flycheck-set-indication-mode 'left-margin)
   :custom
   (flycheck-haskell-hlint-executable "~/.cabal/bin/hlint")
+  (flycheck-display-errors-delay 0.1)
   )
 (use-package yasnippet
   :straight t
   )
+
+;; for lsp
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ; 1mb
+
 (use-package lsp-mode
   :straight t
   :hook (haskell-mode . lsp)
@@ -181,7 +273,7 @@
   (lsp-log-io t)
   (lsp-file-watch-threshold 5000)
   (lsp-enable-file-watchers nil)
-;;  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))  
+;;  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))
   )
 
 (use-package lsp-ui
@@ -199,7 +291,7 @@
 ;;        lsp-ui-peek-enable t
 ;;        lsp-ui-peek-list-width 60
 ;;        lsp-ui-peek-peek-height 25)
-  
+
   ;;  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   )
 (use-package lsp-haskell
