@@ -13,6 +13,32 @@
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 
+;; Keybonds for MacEmacs
+(global-set-key [(hyper a)] 'mark-whole-buffer)
+(global-set-key [(hyper v)] 'yank)
+(global-set-key [(hyper c)] 'kill-ring-save)
+(global-set-key [(hyper s)] 'save-buffer)
+(global-set-key [(hyper l)] 'goto-line)
+(global-set-key [(hyper w)]
+                (lambda () (interactive) (delete-window)))
+(global-set-key [(hyper z)] 'undo)
+;; mac switch meta key
+(defun mac-switch-meta nil
+"switch meta between Option and Command"
+  (interactive)
+  (if (eq mac-option-modifier nil)
+      (progn
+	(setq mac-option-modifier 'meta)
+	(setq mac-command-modifier 'hyper)
+	)
+    (progn
+      (setq mac-option-modifier nil)
+      (setq mac-command-modifier 'meta)
+      )
+    )
+  )
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier `hyper)
 (setq
    ;; No need to see GNU agitprop.
    inhibit-startup-screen t
@@ -109,7 +135,7 @@
       (my-cabal-path (expand-file-name "~/.cabal/bin"))
       (my-ghcup-path (expand-file-name "~/.ghcup/bin"))
       (user-local-path (expand-file-name "/usr/local/bin")))
-  (setenv "PATH" (concat (getenv "PATH") path-separator my-ghcup-path path-separator my-cabal-path path-separator user-local-path path-separator my-local-path))
+  (setenv "PATH" (concat  path-separator my-ghcup-path path-separator my-cabal-path path-separator user-local-path path-separator my-local-path (getenv "PATH")))
   (add-to-list 'exec-path my-cabal-path)
   (add-to-list 'exec-path user-local-path)
   (add-to-list 'exec-path my-local-path)
@@ -234,7 +260,7 @@
   :hook (prog-mode . company-mode)
   :custom
   (company-dabbrev-downcase nil "Don't downcase returned candidates.")
-  (company-show-numbers t "Numbers are helpful.")
+  (company-show-numbers nil "Numbers are helpful.")
   (company-tooltip-limit 20 "The more the merrier.")
   (company-tooltip-idle-delay 0.4 "Faster!")
   (company-async-timeout 20 "Some requests can take a long time. That's fine.")
