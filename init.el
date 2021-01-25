@@ -22,6 +22,8 @@
 (global-set-key [(hyper w)]
                 (lambda () (interactive) (delete-window)))
 (global-set-key [(hyper z)] 'undo)
+(global-set-key [(hyper x)] 'yank)
+
 ;; mac switch meta key
 (defun mac-switch-meta nil
 "switch meta between Option and Command"
