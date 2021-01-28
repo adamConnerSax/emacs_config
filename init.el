@@ -13,6 +13,12 @@
   (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 
+(defun cut-region (beg end)
+  "Copies the text to the kill buffer and deletes the selected region."
+  (interactive "r")
+  (copy-region-as-kill beg end)
+  (delete-region beg end))
+
 ;; Keybonds for MacEmacs
 (global-set-key [(hyper a)] 'mark-whole-buffer)
 (global-set-key [(hyper v)] 'yank)
@@ -22,7 +28,7 @@
 (global-set-key [(hyper w)]
                 (lambda () (interactive) (delete-window)))
 (global-set-key [(hyper z)] 'undo)
-(global-set-key [(hyper x)] 'yank)
+(global-set-key [(hyper x)] 'cut-region)
 
 ;; mac switch meta key
 (defun mac-switch-meta nil
