@@ -118,7 +118,7 @@
   :defer 0.1
   :diminish
   :bind (("C-c C-r" . ivy-resume)
-	 ("C-x b" . ivy-switch-buffer-other-window))
+	 ("C-x b" . ivy-switch-buffer))
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-use-virtual-buffers t)
