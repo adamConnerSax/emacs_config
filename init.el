@@ -92,6 +92,13 @@
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 (setq require-final-newline t)
 
+(use-package typopunct
+  :straight t
+  :hook (rst-mode . typopunct-mode)
+  :custom
+  (typopunct-change-language 'english t)
+  )
+
 
 (use-package gnu-elpa-keyring-update
   :straight t
