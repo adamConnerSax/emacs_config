@@ -94,8 +94,9 @@
 
 (use-package typopunct
   :straight t
+  :hook (markdown-mode . typopunct-mode)
   :hook (rst-mode . typopunct-mode)
-  :custom
+  :config
   (typopunct-change-language 'english t)
   )
 
@@ -297,8 +298,24 @@
   (flycheck-haskell-hlint-executable "~/.cabal/bin/hlint")
   (flycheck-display-errors-delay 0.1)
   )
+
+;;; snippets
 (use-package yasnippet
   :straight t
+  :ensure
+  :demand
+;;;  :bind (:map yas-minor-mode-map
+;;;              ("TAB" . nil)
+;;;              ("<tab>" . nil))
+  :config
+  (setq yas-prompt-functions '(yas-completing-prompt) ; use normal completion
+        yas-verbosity 1)
+  (yas-global-mode 1)
+  )
+
+(use-package yasnippet-snippets
+  :straight t
+  :after yasnippet
   )
 
 ;; for lsp
