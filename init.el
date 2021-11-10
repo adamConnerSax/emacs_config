@@ -277,16 +277,21 @@
   :custom
   (company-dabbrev-downcase nil "Don't downcase returned candidates.")
   (company-show-numbers nil "Numbers are helpful.")
-  (company-tooltip-limit 20 "The more the merrier.")
+  (company-tooltip-limit 10 "The more the merrier.")
   (company-tooltip-idle-delay 0.4 "Faster!")
-  (company-async-timeout 20 "Some requests can take a long time. That's fine.")
+  (company-async-timeout 5 "Some requests can take a long time. That's fine.")
   :config
 
   ;; Use the numbers 0-9 to select company completion candidates
-  (let ((map company-active-map))
-    (mapc (lambda (x) (define-key map (format "%d" x)
-   `(lambda () (interactive) (company-complete-number ,x))))
-   (number-sequence 0 9))))
+;;  (let ((map company-active-map))
+;;    (mapc (lambda (x) (define-key map (format "%d" x)
+;;   `(lambda () (interactive) (company-complete-number ,x))))
+  ;;   (number-sequence 0 9)))
+  :init
+  (setq company-backends '(company-capf
+                           company-keywords
+                           company-yasnippet))
+  )
 
 ;; LSP
 (use-package flycheck
@@ -327,9 +332,9 @@
   :hook (haskell-mode . lsp)
   :commands (lsp lsp-execute-code-action)
   :custom
-  (lsp-print-performance t)
+;;  (lsp-print-performance t)
 ;;  (lsp-log-io t)
-  (lsp-file-watch-threshold 5000)
+  (lsp-file-watch-threshold 500)
   (lsp-enable-file-watchers nil)
 ;;  (lsp-file-watch-ignored (append '("\\dist" "\\dist-newstyle") lsp-file-watch-ignored))
   )
@@ -338,15 +343,17 @@
   :straight t
   :commands lsp-ui-mode
   :init (setq lsp-ui-doc-enable t
-         lsp-ui-doc-use-webkit nil
-         lsp-ui-doc-header nil
+;;         lsp-ui-doc-use-webkit nil
+;;         lsp-ui-doc-header nil
          lsp-ui-doc-delay 0.2
          lsp-ui-doc-include-signature t
          lsp-ui-doc-alignment 'at-point
-         lsp-ui-doc-use-childframe nil
+         lsp-ui-doc-use-childframe t
          lsp-ui-doc-border (face-foreground 'default)
          lsp-ui-peek-enable t
          lsp-ui-peek-show-directory t
+         lsp-ui-sideline-delay 0.2
+         lsp-ui-sideline-wait-for-all-symbols nil
          lsp-ui-sideline-update-mode 'line
          lsp-ui-sideline-enable t
          lsp-ui-sideline-show-code-actions t
