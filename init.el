@@ -242,9 +242,9 @@
 ;;(global-set-key (kbd "C-x g") 'magit-status)
 ;;(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
-(use-package forge
-  :straight t
-  :after magit)
+;;(use-package forge
+;;  :straight t
+;;  :after magit)
 
 (use-package projectile
   :straight t
