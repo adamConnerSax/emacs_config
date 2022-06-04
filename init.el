@@ -119,6 +119,13 @@
 (use-package counsel
   :straight t
   :after ivy
+  :custom
+  (counsel-find-file-ignore-regexp (concat
+                                    ;; Files beginning with #
+                                    "\\(?:\\`[#]\\)"
+                                    ;; Files ending with # or ~
+                                    "\\|\\(?:\\`.+?[#~]\\'\\)")
+                                   )
   :config (counsel-mode))
 
 (use-package ivy
@@ -150,10 +157,12 @@
 (let ((my-local-path (expand-file-name "~/.local/bin"))
       (my-cabal-path (expand-file-name "~/.cabal/bin"))
       (my-ghcup-path (expand-file-name "~/.ghcup/bin"))
+      (my-homebrew-path (expand-file-name "/opt/homebrew/bin"))
       (user-local-path (expand-file-name "/usr/local/bin")))
-  (setenv "PATH" (concat  path-separator my-ghcup-path path-separator my-cabal-path path-separator user-local-path path-separator my-local-path (getenv "PATH")))
+  (setenv "PATH" (concat  path-separator my-ghcup-path path-separator my-cabal-path path-separator my-homebrew-path path-separator user-local-path path-separator my-local-path (getenv "PATH")))
   (add-to-list 'exec-path my-cabal-path)
   (add-to-list 'exec-path user-local-path)
+  (add-to-list 'exec-path my-homebrew-path)
   (add-to-list 'exec-path my-local-path)
   (add-to-list 'exec-path my-ghcup-path)
   )
